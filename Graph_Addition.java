@@ -1,24 +1,26 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 class vertex{
-   HashMap<String,Integer> neigbours = new HashMap<>();
+    HashMap<String,Integer> neigbours = new HashMap<>();
 }
 class Graph{
     HashMap<String,vertex> allVertex= new HashMap<>();
-    // total vertex
+    // total vertex---->Count Vertex.....
     int totalVertex(){
         return allVertex.size();
     }
     void addVertex(String Name){
-     vertex ver =new vertex();
-     allVertex.put(Name,ver);
+        vertex ver =new vertex();
+        allVertex.put(Name,ver);
     }
     boolean isEdge(String name1 , String name2){
         vertex one = allVertex.get(name1);
         vertex two = allVertex.get(name2);
-         return (one.neigbours.containsKey(two));
+        return (one.neigbours.containsKey(name2));
     }
+
     void addEdges(String name1 , String name2 , int cost){
         vertex one = allVertex.get(name1);
         vertex two = allVertex.get(name2);
@@ -27,20 +29,60 @@ class Graph{
             return;
         }
         if(one == null || two == null){
-                System.out.println("Need two Vertex....");
-                return;
+            System.out.println("Need two Vertex....");
+            return;
         }
         else {
             one.neigbours.put(name2, cost);
             two.neigbours.put(name1, cost);
         }
-
-        }
-        void print(){
+    }
+    void print(){
         for(Map.Entry<String,vertex> m : allVertex.entrySet()){
             System.out.println(m.getKey() + " ==>" + m.getValue().neigbours);
         }
+    }
+    void removeEdge(String name1 , String name2){
+
+        if(isEdge(name1 , name2)) {
+            vertex one = allVertex.get(name1);
+            vertex two = allVertex.get(name2);
+            one.neigbours.remove(name2);
+            two.neigbours.remove(name1);
+            System.out.println("Removed Edges...");
         }
+        else
+        {
+            System.out.println("can't be Terminated.....");
+        }
+    }
+
+    void removeVertex(String name){
+            vertex one = allVertex.get(name);
+            Set<String> set = one.neigbours.keySet();
+            for (String Key : set) {
+                vertex neighbourVertex = allVertex.get(Key);
+                neighbourVertex.neigbours.remove(name);
+            }
+        allVertex.remove(name);
+
+    }
+    boolean pathExist(String startVertex,String ReachVertex,HashMap<String,Boolean> visited){
+        visited.put(startVertex,true);
+        if(isEdge(startVertex,ReachVertex)){
+            return true;
+        }
+        vertex one  = allVertex.get(startVertex);
+        Set<String> sets = one.neigbours.keySet();
+        for(String set : sets){
+            if(!visited.containsKey(set) && pathExist(set,ReachVertex,visited)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 }
 public class graph_Opereations {
     public static void main(String[] args) {
@@ -60,7 +102,16 @@ public class graph_Opereations {
         gp.addEdges("E","F",7);
         gp.addEdges("F","G",9);
         gp.addEdges("E","G",8);
+
+
+        HashMap<String,Boolean> hMap = new HashMap<>();
+        String str = gp.pathExist("A","E",hMap) ? " Found ": "Not Found";
+        System.out.println(str);
+        System.out.println("***********");
+        gp.removeVertex("A");
         gp.print();
+
+
 
     }
 }
