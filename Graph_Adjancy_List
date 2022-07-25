@@ -1,0 +1,103 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
+public class newAdjlist {
+    public static  void addEdge(ArrayList<ArrayList<Integer>> adjList ,int v1,int v2){
+        adjList.get(v1).add(v2);
+        adjList.get(v2).add(v1);
+    }
+
+public static void print(ArrayList<ArrayList<Integer>> adjlist ){
+        for(int i=0;i<adjlist.size();i++){
+            String output ="";
+            for(int k=0 ;k<adjlist.get(i).size();k++){
+                   output +=adjlist.get(i).get(k)+ ",";
+            }
+            System.out.println(i+ " =>" + output);
+        }
+
+}
+    static boolean IsEdgeExist(int v1 , int v2 , ArrayList<ArrayList<Integer>>  adjlist){
+        ArrayList<Integer> arr = adjlist.get(v1);
+        for (Integer n : arr){
+            if(n == v2){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean BFS(int intialNode, int FinalNode ,  ArrayList<ArrayList<Integer>> adjlist) {
+        Queue<Integer> arr = new LinkedList<>();
+        boolean visited[] = new boolean[adjlist.size()];
+          visited[intialNode] = true;
+          arr.add(intialNode);
+          String output = "";
+          while(!arr.isEmpty()) {
+              int element = arr.poll();
+              output+=element +" ";
+              if (IsEdgeExist(element, FinalNode, adjlist)) {
+                  output+=FinalNode +" ";
+                  System.out.println(output);
+                  return true;
+
+              }
+              for (int neighbour : adjlist.get(element)) {
+                  if (visited[neighbour]== false) {
+                      visited[neighbour] = true;
+                      arr.add(neighbour);
+                  }
+              }
+          }
+          return false;
+    }
+    public static boolean dfs(int start , int  end , ArrayList<ArrayList<Integer>> adjList){
+        Stack<Integer> st = new Stack<>();
+        boolean visited [] =  new boolean[adjList.size()];
+        visited[start] = true;
+        st.push(start);
+        String output = "";
+        while(!st.empty()){
+            int elemnt = st.pop();
+            output+=elemnt +" ";
+            if(IsEdgeExist(elemnt,end,adjList)){
+                output+=end +" ";
+                System.out.println(output);
+                return true;
+            }
+            for (int neighbour : adjList.get(start)){
+                if(visited[neighbour] == false){
+                    visited[neighbour] = true;
+                    st.add(neighbour);
+                }
+            }
+        }
+
+        System.out.println(output);
+        return false;
+
+    }
+    public static void main(String[] args) {
+        ArrayList<ArrayList<Integer>> adjlist= new ArrayList<>();
+        int totalVertex =4;
+        for(int i=0 ;i<totalVertex;i++){
+            adjlist.add(new ArrayList<>());
+        }
+        addEdge(adjlist,0,1);
+        addEdge(adjlist,0,2);
+        addEdge(adjlist,1,2);
+        addEdge(adjlist,1,3);
+        print(adjlist);
+        String str = IsEdgeExist(0,2,adjlist) ? "Yes,Path Exist " : " Path Not Exist";
+        System.out.println(str);
+        System.out.println("**********");
+        String val = BFS(0,3,  adjlist) ? "Node Found " : "Node Not Found";
+        System.out.println(val);
+        System.out.println("**********");
+        String val1 = dfs(0,3,  adjlist) ? "Node Found " : "Node Not Found";
+        System.out.println(val1);
+
+    }
+}
